@@ -139,8 +139,6 @@ function checkZonesOnline($member) {
 		if($handle) {
 			$sonoszone[$zonen] = $ip;
 			array_push($zonesonline, $zonen);
-		#} else {
-		#	LOGGING("helper.php: Player $zonen seems to be Offline, please check your power/network settings",4);
 		}
 	}
 	$member = $zonesonline;
@@ -772,6 +770,9 @@ function select_t2s_engine()  {
 	}
 	if ($config['TTS']['t2s_engine'] == 9001) {
 		include_once("voice_engines/MS_Azure.php");
+	}
+	if ($config['TTS']['t2s_engine'] == 9011) {
+		include_once("voice_engines/ElevenLabs.php");
 	}
 	if ($config['TTS']['t2s_engine'] == 8001) {
 		include_once("voice_engines/GoogleCloud.php");
@@ -1538,5 +1539,39 @@ function CheckSubSur($val)    {
 	return $subsur;
 }
 
+
+function checkOnline($zone)   {
+	
+	global $folfilePlOn;
+		
+	$handle = is_file($folfilePlOn."".$zone.".txt");
+	#var_dump($handle);
+	if($handle === true)   {
+		$zoneon = "true";
+	} else {
+		$zoneon = "false";
+	}
+	return $zoneon;
+}
+
+
+/**
+ * Recursively filter an array
+ *
+ * @param array $array
+ * @param callable $callback
+ *
+ * @return array
+ */
+function array_filter_recursive( array $array, callable $callback = null ) {
+    $array = is_callable( $callback ) ? array_filter( $array, $callback ) : array_filter( $array );
+    foreach ( $array as &$value ) {
+        if ( is_array( $value ) ) {
+            $value = call_user_func( __FUNCTION__, $value, $callback );
+        }
+    }
+
+    return $array;
+}
 
 ?>

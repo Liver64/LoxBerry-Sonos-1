@@ -941,7 +941,6 @@
 
 	<!-- Speech SDK reference sdk. -->
 	
-	<!--<script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>-->
 	<script src="/plugins/<TMPL_VAR PLUGINDIR>/voice_engines/bin/Microsoft/microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
 	<script>
         //***************** Functions to be executed during loading the page **********************
@@ -954,7 +953,8 @@
 				radlayout();
 				weatherlayout();
 				donation();
-				getsbconfig();
+				//getsbconfig();
+				//getradio();
 			});
 			var tvmonerr = "true";		
 		
@@ -1593,16 +1593,17 @@
 				});
 			});
 		});
-		
+
 		// get soundbar config
 		function getsbconfig()   {
-		
+
 			$.ajax({
 					url: 'index.cgi',
 					type: 'post',
-					data: { action: 'soundbars',},
+					data: { action: 'soundbars'},
 					dataType: 'json',
-						success: function(data) {
+					async: false,
+						success: function(data, textStatus, jqXHR )   {
 							//console.log(data);
 							$.each(data, function(index, valu) {
 								if (valu[13] == 'SB')   {
@@ -1641,19 +1642,17 @@
 										}
 										//callback(tvmonerr);
 										validate_enable("#tvvol_" + index);
-										//validate_chk_object(["#tvvol_" + index]);
-										//return false;
 									}
 									
 								}
 							});
 						}
 					})
-				.fail(function(data) {
-					console.log( "Action failed", data );
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown);
 				})
 				.always(function(data) {
-					return data;
+					console.log( "Action get Soundbars Config executed" );
 				})
 		};
 		
@@ -1785,6 +1784,7 @@
 		}
 		
 		
+
 		function refresh()   {
 			$("#langiso").textinput("refresh");
 			$('#t2slang').selectmenu('refresh');
@@ -1794,7 +1794,7 @@
 		}		
 		
 		// document ready
-        $(document).ready(function() {
+        $(document).ready(function(e) {
 			console.log("documentreadyfunction");
             $('#engine-selector input').change(prepareTTSConfigFields);
             $('#t2slang').change(populateVoice);
@@ -1808,7 +1808,8 @@
 			validateSB();
 			validateTVMon();
 			getsbconfig();
-						
+
+		
 			// validate Volume entries per player
             var iteration = document.getElementById('countplayers').value;
             iteration = parseInt(iteration)
@@ -2064,6 +2065,7 @@
 						}, 1000);
 						$("#udpport").focus();
 						dialog('<TMPL_VAR ERRORS.ERR_UDP_MISSING>', 'OK', 'error', 'UPD Port');
+						//return false;
 						e.preventDefault();
 						
 					}
@@ -2130,16 +2132,13 @@
                                 <td style="width: 30%">
                                     <!--<table class="cronjob" border=0 style="width: 91%">-->
                                         	<select id="func_list" name="func_list" data-mini="true" data-native-menu="true">
-												<option selected="selected" disabled value="" >*** Select Function for ZAPZONE ***</option>
+												<option selected="selected" disabled value="" >*** Select Function ***</option>
 												<option value="nextradio" >Nextradio</option>
 												<option value="trackfavorites" >Track Favorites</option>
 												<option value="playlistfavorites" >Playlist Favorites</option>
 												<option value="radiofavorites" >Radio Favorites</option>
 												<option value="tuneinfavorites" >TuneIn Radio</option>
 											</select>
-										<script>
-											$('#func_list').val('<TMPL_VAR VARIOUS.selfunction>');
-										</script>	
                                     <!--</table>-->
                                 </td>
 									<td style="width: 20%; height: 60px;">
@@ -2321,6 +2320,82 @@
                     </td>
                 </tr>
 				
+				<tr>
+                    <td style="height: 60px; width: 15%; text-align: left;">
+                        <label id="lswupdate">Auto Update Sonos Soft-/Firmware</label>
+                    </td>
+                    <td style="height: 60px; width: 30%;">
+                        <table border=0 width="65%">
+                            <tr>
+							<td style="width: 10%">
+									<fieldset style="width: 100%">
+										<select onchange="select_update()" id="hw_update" name="hw_update" data-role="flipswitch">
+											<option value="false"><TMPL_VAR T2S.LABEL_FLIPSWITCH_OFF></option>
+											<option value="true"><TMPL_VAR T2S.LABEL_FLIPSWITCH_ON></option>
+										</select>
+										<script>
+											$('#hw_update').val('<TMPL_VAR SYSTEM.hw_update>')
+										</script>
+									</fieldset>
+								</td>
+								<div class="update">
+								<td class="update" style="width: 15%; height: 60px;">
+                                    <label align="right" id="lstartupdate">Start:</label>
+                                </td>
+                                <td class="update" style="width: 20%">
+										<fieldset style="width:90%">
+											<select id="hw_update_time" name="hw_update_time" data-mini="true" data-native-menu="true" style="width: 100%">
+												  <option value="0">0:00</option>
+												  <option value="1">1:00</option>
+												  <option value="2">2:00</option>
+												  <option value="3">3:00</option>
+												  <option value="4">4:00</option>
+												  <option value="5">5:00</option>
+												  <option value="6">6:00</option>
+												  <option value="7">7:00</option>
+												  <option value="8">8:00</option>
+												  <option value="9">9:00</option>
+												  <option value="10">10:00</option>
+												  <option value="11">11:00</option>
+												  <option value="12">12:00</option>
+												  <option value="13">13:00</option>
+												  <option value="14">14:00</option>
+												  <option value="15">15:00</option>
+												  <option value="16">16:00</option>
+												  <option value="17">17:00</option>
+												  <option value="18">18:00</option>
+												  <option value="19">19:00</option>
+												  <option value="20">20:00</option>
+												  <option value="21">21:00</option>
+												  <option selected="selected" value="22">22:00</option>
+												  <option value="23">23:00</option>
+											</select>
+										</fieldset>
+										<script>
+											$('#hw_update_time').val('<TMPL_VAR SYSTEM.hw_update_time>');
+										</script>
+                               </td>
+								
+								<td class="update" style="width: 17%; text-align: left;">
+                                    <label align="right" id="lupdatepower">Power On:</label>
+								</td>
+                                <td class="update" style="width: 5%">
+                                    <fieldset style="width: 100%">
+										<select id="hw_update_power" name="hw_update_power" data-role="flipswitch">
+											<option value="false"><TMPL_VAR T2S.LABEL_FLIPSWITCH_OFF></option>
+											<option value="true"><TMPL_VAR T2S.LABEL_FLIPSWITCH_ON></option>
+										</select>
+									</fieldset>
+									<script>
+										$('#hw_update_power').val('<TMPL_VAR SYSTEM.hw_update_power>');
+									</script>
+                                </td>
+								</div>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+				
 
                 <tr>
                     <td style="width: 27%">
@@ -2405,6 +2480,7 @@
             <script>
                 $(document).on('pageinit', function() {
                     select();
+					select_update();
                     //select_always();
                     //cronjob();
 
@@ -2429,7 +2505,17 @@
                     }
                 }
 				
+				function select_update() {
+                    var up = document.getElementById('hw_update').value;
+					console.log(up);
+                    if (up == 'true') {
+                        $('.update').show();
+                    } else {
+                        $('.update').hide();
+                    }
+                }
 				
+								
 				function message()   {
 					console.log("save");
 					timeout('<TMPL_VAR SAVE.SAVE_MESSAGE>', 'OK', 'info', '<TMPL_VAR SAVE.SAVE_ALL_OK>', '3000');
@@ -2471,7 +2557,30 @@
 						});
 				}
 				
-            </script>
+				// get Radio favorites
+				$.ajax({
+						url: 'index.cgi',
+						type: 'post',
+						data: { action: 'getradio'},
+						dataType: 'json',
+						async: false,
+							success: function( response, textStatus, jqXHR )  {
+							//$('#func_list').append('<option value="" disabled>** only for FOLLOW function***</option>');
+								$.each(response, function(index, value) {
+									result = value.split(',');
+									$('#func_list').append('<option value="' + result[1] + '">Plugin Radio: ' + result[0] + '</option>');
+								});
+							}
+						})
+						.fail(function (jqXHR, textStatus, errorThrown) {
+							console.log(errorThrown);
+						})
+						.always(function(response) {
+							$('#func_list').val('<TMPL_VAR VARIOUS.selfunction>');
+							console.log( "Action get Radio Favorites executed" );
+						})
+			
+				</script>
         </div>
     </form>
 </TMPL_IF>

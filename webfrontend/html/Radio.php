@@ -410,7 +410,7 @@ function PluginRadio()
 	}
 	$check_stat = getZoneStatus($master);
 	if ($check_stat != (string)"single")  {
-		$sonos->BecomeCoordinatorOfStandaloneGroup();
+		#$sonos->BecomeCoordinatorOfStandaloneGroup();
 		LOGGING("radio.php: Zone ".$master." has been ungrouped.",5);
 	}
 	if(isset($_GET['member'])) {

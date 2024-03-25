@@ -79,7 +79,7 @@ $folfilePlOn = "$lbpdatadir/PlayerStatus/s4lox_on_";			// Folder and file name f
 $debuggingfile = "$lbpdatadir/s4lox_debug_config.json";			// Folder and file name for Debug Config
 $file = $lbphtmldir."/bin/check_player_dup.txt";				// File to check for duplicate player
 $save_status_file = "s4lox_follow";								// Status file for follow function
-$guid = "3c0d76cc-5b6b-4e5b-b47d-4719a8371191";					// GUID for Sonos AudioClip Function
+$guid = "7bfca5bf-165e-419b-a4c1-a64b895e95d7";					// GUID for Sonos AudioClip Function
 
 
 # Files for ONE-click functions
@@ -174,7 +174,7 @@ if ((isset($_GET['text'])) or (isset($_GET['messageid'])) or
 	if (isset($_GET['text']))  {
 		if (($_GET['text'] === "null") or ($_GET['text'] === "0"))  {
 			LOGGING("sonos.php: NULL or 0 or Text from Loxone Status has been entered, therefor T2S been skipped", 6);	
-			exit(1);
+			exit;
 		}
 	}
 }
@@ -392,7 +392,7 @@ if(isset($_GET['rampto'])) {
 				break;
 		}
 	}
-	
+
 if(array_key_exists($_GET['zone'], $sonoszone)){ 
 
 	global $json;
@@ -1425,62 +1425,12 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 		
 
 		case 'follow':
-			
-			# get zone
-			if (isset($_GET['zone']))   {
-				$client = $_GET['zone'];
-				LOGINF("sonos.php: Client '".$client."' has been entered");
-			} else {
-				LOGWARN("sonos.php: No client (zone) has been entered");
-				exit;
-			}
-			
-			# get host
-			if (isset($_GET['host']))   {
-				$hostroom 	= $_GET['host'];
-				$host		= $sonoszone[$hostroom][1];
-				LOGINF("sonos.php: Host '".$hostroom."' has been entered in URL");
-			} elseif (isset($config['VARIOUS']['follow_host']) 
-					and $config['VARIOUS']['follow_host'] != "false"
-					and $config['VARIOUS']['follow_host'] != "")   {
-				$hostroom 	= $config['VARIOUS']['follow_host'];
-				$host		= $sonoszone[$hostroom][1];
-				LOGINF("sonos.php: Host '".$hostroom."' has been grabbed from config");
-			} else {
-				LOGWARN("sonos.php: No Host has been maintained in config, nore Host has been entered in URL. Please maintain config <Options> or add '...&action=follow&host=ROOMNAME'");
-				exit;
-			}
-			follow($client);
-		
+			follow();	
 		break;
 		
 		
 		case 'leave':
-		
-			# get zone
-			if (isset($_GET['zone']))   {
-				$client = $_GET['zone'];
-				LOGINF("sonos.php: Client '".$client."' has been entered");
-			} else {
-				LOGWARN("sonos.php: No client (zone) has been entered");
-				exit;
-			}
-			
-			# get wait time
-			if (isset($_GET['delay']))   {
-				$waitleave = $_GET['delay'];
-				LOGINF("sonos.php: ".$waitleave." seconds delay for '".$client."' has been entered");
-			} elseif (isset($config['VARIOUS']['follow_wait']) 
-					and $config['VARIOUS']['follow_wait'] != "false"
-					and $config['VARIOUS']['follow_wait'] != "")   {
-				$waitleave 	= $config['VARIOUS']['follow_wait'];
-				LOGINF("sonos.php: ".$waitleave." seconds delay for '".$client."' grabbed from config");
-			} else {
-				LOGWARN("sonos.php: No delay to leave 'follow' function has been maintained in config, nore delay has been entered in URL. Please maintain config <Options> or add '...&action=leave&delay=SECONDS'");
-				exit;
-			}
-			leave($client, $waitleave);
-			
+			leave();
 		break;
 				
 		case 'createstereopair':
@@ -1736,6 +1686,16 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 		
 		case 'streammode':
 			GetHtMode();
+		break;
+		
+		case 'update':
+			#$update = $sonos->CheckForUpdate();
+			print_r($update);
+		break;
+		
+		case 'runupdate':
+			$update = $sonos->BeginSoftwareUpdate('http://update-firmware.sonos.com/firmware/Prod/78.1-51070-v16.1-ky0VGxvZsT-GA-3/^78.1-51070');
+			print_r($update);
 		break;
 			
 		case 'ttsp':

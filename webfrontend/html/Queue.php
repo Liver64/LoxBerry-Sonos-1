@@ -123,37 +123,51 @@ function PlayZapzoneNext()
 {
 	global $sonos, $config, $volume, $zapname, $queuetracktmp, $browse, $sonoszone, $re, $master, $favtmp;
 	
+	$value  = substr($config['VARIOUS']['selfunction'], 0, 4);
+	
 	$empty = array();
 	if ($config['VARIOUS']['selfunction'] == "nextradio")   {
 		nextradio();
 		file_put_contents($zapname, json_encode($empty));
-		return;
+		return "nextradio";
 		
 	} elseif ($config['VARIOUS']['selfunction'] == "trackfavorites")   {
 		PlayTrackFavorites();
 		file_put_contents($zapname, json_encode($empty));
-		return;
+		return "trackfavorites";
 		
 	} elseif ($config['VARIOUS']['selfunction'] == "playlistfavorites")   {
 		PlayPlaylistFavorites();
 		file_put_contents($zapname, json_encode($empty));
-		return;
+		return "playlistfavorites";
 		
 	} elseif ($config['VARIOUS']['selfunction'] == "radiofavorites")   {
 		PlayRadioFavorites();
 		file_put_contents($zapname, json_encode($empty));
-		return;
+		return "radiofavorites";
 		
 	} elseif ($config['VARIOUS']['selfunction'] == "tuneinfavorites")   {
 		PlayTuneInPlaylist();
 		file_put_contents($zapname, json_encode($empty));
-		return;
+		return "tuneinfavorites";
+		
+	# Radio Station from Radio Favorites
+	} elseif ($value == "http")   {
+		$index = array_values($config['RADIO']['radio']);
+		foreach ($index as $key => $value)   {
+			$splitted = explode(",", $value);
+			if ($splitted[1] == $config['VARIOUS']['selfunction'])  {
+				$sonos->SetRadio('x-rincon-mp3radio://'.trim($splitted[1]), trim($splitted[0]), trim($splitted[2]));
+				return $splitted[0];
+			}
+		}
+		return "false";
 		
 	} else {
 		nextradio();
 		file_put_contents($zapname, json_encode($empty));
-		LOGGING("queue.php: Exception raised... Please configure zapzone settings in Sonos Plugin under Details/Sub-Function for ZAPZONE:",4);
-		return;
+		LOGGING("queue.php: Exception raised... Please configure zapzone or follow settings in Sonos Plugin under Options",4);
+		return "nextradio";
 	}
 }
 

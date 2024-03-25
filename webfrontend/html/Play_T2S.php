@@ -20,6 +20,8 @@ $myLBip = LBSystem::get_localip();
 **/
 
 function say() {
+	
+	global $sonos;
 			
 	if(!isset($_GET['member'])) {
 		if ((!isset($_GET['text'])) && (!isset($_GET['messageid'])) && (!isset($errortext)) && (!isset($_GET['sonos'])) &&
@@ -33,6 +35,7 @@ function say() {
 		if(isset($_GET['clip'])) {
 			LOGDEB("play_t2s.php: Single Notification been called");
 			//Audioclipevent();
+			$sonos->SetVolume('20');
 			sendaudioclip();
 		} else {
 			LOGDEB("play_t2s.php: Single TTS been called");
@@ -778,7 +781,7 @@ function sendaudioclip($errortext = "") {
 
 function doorbell() {
 
-	global $config;
+	global $config, $sonos;
 
 	if(isset($_GET['playgong'])) {
 		LOGERR("play_t2s.php: Audioclip: playgong could not be used im combination with function 'doorbell'");
@@ -797,7 +800,7 @@ function doorbell() {
 	if (isset($_GET['member'])) {
 		$zones = array_merge($zones, audioclip_handle_members($_GET['member']));
 	}
-
+	
 	if (isset($_GET['file'])) {
 		$file = $_GET['file'];
 		$file = $file.'.mp3';
@@ -1100,7 +1103,7 @@ function audioclip_handle_members($member) {
 function audioclip_multi_post_request($zones, $clipType="CUSTOM", $priority="LOW", $tts="") {
 
 	global $volume, $guid;
-
+	
 	if(empty($zones)) return;
 
 	$headers = [
@@ -1270,7 +1273,7 @@ function audioclip_post_request($ip, $rincon, $clipType="CUSTOM", $priority="LOW
 	// Set the content type to application/json
 	$headers = [
 		'Content-Type: application/json',
-		'X-Sonos-Api-Key: '.$guid,
+		'X-Sonos-Api-Key: '.guidv4(),
 	];
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); 
 
@@ -1280,7 +1283,7 @@ function audioclip_post_request($ip, $rincon, $clipType="CUSTOM", $priority="LOW
 	
 	// Request response from Call
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		 
+		
 	// Execute the request
 	$result = curl_exec($ch);
 	
@@ -1292,6 +1295,7 @@ function audioclip_post_request($ip, $rincon, $clipType="CUSTOM", $priority="LOW
 	}
 	// close cURL
 	curl_close($ch);
+	var_dump($result);
 	return $result;
 }
 

@@ -36,8 +36,8 @@ use Cwd 'abs_path';
 use Scalar::Util qw/reftype/;
 use JSON qw( decode_json );
 use utf8;
-use warnings;
-use strict;
+#use warnings;
+#use strict;
 use Data::Dumper;
 #use Config::Simple '-strict';
 #no strict "refs"; # we need it for template system
@@ -230,29 +230,27 @@ inittemplate();
 
 our $q = $cgi->Vars;
 
-if( $q->{action} ) 
+if( $q->{action} )
 {
-	ajax_header_json();
+	print "Content-type: application/json\n\n";
 	if( $q->{action} eq "soundbars" ) {
-		pass_sonoszonen();
-		print JSON::encode_json($response);
+		print JSON::encode_json($cfg->{sonoszonen});
+		exit;
+	}	
+
+	if( $q->{action} eq "getradio" ) {
+		print JSON::encode_json($cfg->{RADIO}->{radio});
+		exit;
 	}
-	exit;
 }
+
+
 
 if ($R::getkeys)
 {
 	getkeys();
 }
 
-sub ajax_header_json
-{
-	print $cgi->header(
-			-type => 'application/json',
-			-charset => 'utf-8',
-			-status => '200 OK',
-	);	
-}
 
 
 #########################################################################
@@ -673,6 +671,7 @@ sub form
 	} else {
 		$template->param("DONATE", '');
 	}
+
 	printtemplate();
 	exit;
 }
@@ -712,6 +711,9 @@ sub save_details
 	$cfg->{VARIOUS}->{cron} = "$R::cron";
 	$cfg->{VARIOUS}->{selfunction} = "$R::func_list";
 	$cfg->{SYSTEM}->{checkt2s} = "$R::checkt2s";
+	$cfg->{SYSTEM}->{hw_update} = "$R::hw_update";
+	$cfg->{SYSTEM}->{hw_update_time} = "$R::hw_update_time";
+	$cfg->{SYSTEM}->{hw_update_power} = "$R::hw_update_power";
 		
 	# save all radiostations
 	#for ($i = 1; $i <= $countradios; $i++) {
@@ -836,8 +838,6 @@ sub save
 	$cfg->{VARIOUS}->{CALDav2} = "$R::cal";
 	$cfg->{VARIOUS}->{tvmon} = "$R::tvmon";
 	$cfg->{VARIOUS}->{starttime} = "$R::starttime";
-	#$cfg->{VARIOUS}->{follow_host} = "$R::follow_host";
-	#$cfg->{VARIOUS}->{follow_wait} = "$R::follow_wait";
 	$cfg->{VARIOUS}->{endtime} = "$R::endtime";
 	$cfg->{LOCATION}->{region} = "$R::region";
 	$cfg->{LOCATION}->{googlekey} = "$R::googlekey";
@@ -873,9 +873,9 @@ sub save
 	}
 	
 	# save radiostations
-	for ($i = 1; $i <= $countradios; $i++) {
+	for ($i = 1; $i <= $countradios; $i++)   {
 		if ( param("chkradios$i") ) { # if radio should be deleted
-			delete $cfg->{RADIO}->{radio}->{$i}  ;
+			delete $cfg->{RADIO}->{radio}->{$i};
 		} else { # save
 			my $rname = param("radioname$i");
 			my $rurl = param("radiourl$i");
@@ -893,12 +893,6 @@ sub save
 		$error_message = $SL{'ZONES.ERROR_NO_SCAN'};
 		&error;
 	}
-	
-	my $tvmonnightsub;
-	my $tvmonnightsublevel;
-	my $tvsub;
-	my $tvmonsurr;
-	my $tvsur;
 	
 	# save Sonos devices
 	my $emergecalltts;
@@ -1041,16 +1035,6 @@ sub scan
 	}
 }
 
-
-#####################################################
-# pass Sonoszonen config to template (AJAX)
-#####################################################
-
-sub pass_sonoszonen
-{
-	my $zonenconfig = $cfg->{sonoszonen};
-	$response = $zonenconfig;
-}
 
 
 #####################################################
