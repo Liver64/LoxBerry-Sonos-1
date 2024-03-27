@@ -1688,16 +1688,6 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 			GetHtMode();
 		break;
 		
-		case 'update':
-			#$update = $sonos->CheckForUpdate();
-			print_r($update);
-		break;
-		
-		case 'runupdate':
-			$update = $sonos->BeginSoftwareUpdate('http://update-firmware.sonos.com/firmware/Prod/78.1-51070-v16.1-ky0VGxvZsT-GA-3/^78.1-51070');
-			print_r($update);
-		break;
-			
 		case 'ttsp':
 			$text = ($_GET['text']);
 			isset($_GET['greet']) ? $greet = 1 : $greet = 0;

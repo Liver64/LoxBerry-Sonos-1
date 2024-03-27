@@ -34,8 +34,6 @@ function say() {
 		}
 		if(isset($_GET['clip'])) {
 			LOGDEB("play_t2s.php: Single Notification been called");
-			//Audioclipevent();
-			$sonos->SetVolume('20');
 			sendaudioclip();
 		} else {
 			LOGDEB("play_t2s.php: Single TTS been called");
@@ -711,6 +709,7 @@ function sendaudioclip($errortext = "") {
 	
 	global $config, $volume, $filename, $messageid, $sonoszone, $sonos, $act_player, $playstat, $roomcord, $playg;
 	
+	#print_r($sonoszone);
 	$time_start = microtime(true);
 	if ((empty($config['TTS']['t2s_engine'])) or (empty($config['TTS']['messageLang'])))  {
 		LOGGING("play_t2s.php: Audioclip: There is no T2S engine/language selected in Plugin config. Please select before using any T2S functionality.", 3);
@@ -1235,9 +1234,24 @@ function audioclip_post_request($ip, $rincon, $clipType="CUSTOM", $priority="LOW
 	
 	global $myLBip, $volume, $lbhostname, $lbwebport, $filename, $streamUrl, $config, $guid;
 	
+	/**
+	echo "IP: ".$ip.PHP_EOL;
+	echo "Rincon: ".$rincon.PHP_EOL;
+	echo "clipType: ".$clipType.PHP_EOL;
+	echo "tts: ".$tts.PHP_EOL;
+	echo "volume: ".$volume.PHP_EOL;
+	echo "priority: ".$priority.PHP_EOL;
+	echo "guid: ".$guid.PHP_EOL;
+	echo "filename: ".$filename.PHP_EOL;
+	**/	
+	
 	// API Url
 	$url = audioclip_url($ip, $rincon);
-
+	/**
+	echo "url: ".$url.PHP_EOL;
+	echo "<br>";
+	**/	
+	
 	// Initiate cURL.
 	$ch = curl_init($url);
 
@@ -1246,6 +1260,8 @@ function audioclip_post_request($ip, $rincon, $clipType="CUSTOM", $priority="LOW
 			'name' => "AudioClip",
 			'appId' => 'de.loxberry.sonos',
 			'clipType' => "CUSTOM",
+			'httpAuthorization' => null,
+			'clipLEDBehavior' => 'NONE',
 			'streamUrl' => $tts,
 			'priority' => $priority,
 			'volume' => $volume
@@ -1256,6 +1272,8 @@ function audioclip_post_request($ip, $rincon, $clipType="CUSTOM", $priority="LOW
 			'name' => "AudioClip",
 			'appId' => 'de.loxberry.sonos',
 			'clipType' => "CHIME",
+			'httpAuthorization' => null,
+			'clipLEDBehavior' => 'NONE',
 			'priority' => $priority,
 			'volume' => $volume
 		);
@@ -1263,7 +1281,7 @@ function audioclip_post_request($ip, $rincon, $clipType="CUSTOM", $priority="LOW
 		 
 	// Encode the array into JSON.
 	$jsonDataEncoded = json_encode($jsonData);
-		 
+
 	// Tell cURL that we want to send a POST request.
 	curl_setopt($ch, CURLOPT_POST, 1);
 	 
@@ -1273,7 +1291,8 @@ function audioclip_post_request($ip, $rincon, $clipType="CUSTOM", $priority="LOW
 	// Set the content type to application/json
 	$headers = [
 		'Content-Type: application/json',
-		'X-Sonos-Api-Key: '.guidv4(),
+		"Accept: application/json",
+		'X-Sonos-Api-Key: '.$guid,
 	];
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); 
 
@@ -1287,51 +1306,33 @@ function audioclip_post_request($ip, $rincon, $clipType="CUSTOM", $priority="LOW
 	// Execute the request
 	$result = curl_exec($ch);
 	
+	// Request info/details from Call
+	$info = curl_getinfo($ch);
+	
 	// was the request successful?
-	if($result === false)  {
-		LOGGING("play_t2s.php: cURL AudioClip Error: ".curl_error($ch), 7);
+	if($result === false or $info['http_code'] != "200")  {
+		$result = json_decode($result, true);
+		if (isset($result['_objectType']))  {
+			$split = explode(",", $result['wwwAuthenticate']);
+			try {
+				LOGGING("play_t2s.php: cURL AudioClip error: ".$result['errorCode']." ".$split[2], 3);
+				exit;
+			} catch (Exception $e) {
+				LOGGING("play_t2s.php: cURL AudioClip unknown error", 3);
+				exit;
+			}
+		} else {
+			LOGGING("play_t2s.php: cURL AudioClip error: ".curl_error($ch), 3);
+			exit;
+		}
 	} else {
 		LOGGING("play_t2s.php: cURL AudioClip request okay!", 7);
 	}
 	// close cURL
 	curl_close($ch);
-	var_dump($result);
+	#print_r($result);
 	return $result;
 }
 
-
-
-function Audioclipevent()   {
-	
-global $rincon, $ip, $config, $guid;
-
-$curl = curl_init();
-
-curl_setopt_array($curl, [
-  CURLOPT_URL => "https://".$ip[0].":1443/api/v1/players/".$rincon."/audioClip/subscription",
-  CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_ENCODING => "",
-  CURLOPT_MAXREDIRS => 10,
-  CURLOPT_TIMEOUT => 30,
-  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-  CURLOPT_CUSTOMREQUEST => "POST",
-  CURLOPT_HTTPHEADER => [
-		'Content-Type: application/json',
-		'X-Sonos-Api-Key: '.$guid,
-	],
-]);
-
-$response = curl_exec($curl);
-$err = curl_error($curl);
-
-curl_close($curl);
-
-if ($err) {
-	LOGERR("play_t2s.php: cURL Subscribe Error: " . $err);
-} else {
-	LOGDEB("play_t2s.php: cURL Subscribe event: ".$response);
-	echo "play_t2s.php: cURL Subscribe event: ".$response;
-}
-}
 
 ?>

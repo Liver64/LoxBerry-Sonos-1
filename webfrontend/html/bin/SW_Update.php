@@ -80,6 +80,8 @@ if (is_enabled($hw_update) and $hw_update_time == $Stunden)    {
 			if ($vers != $update['build'])  {
 				LOGINF("bin/SW_Update.php: Update for Player '".$zone."' required. Current Version is: '".$vers."' and will be updated to: '".$update['build']."'");
 				$count++;
+			} else {
+				LOGDEB("bin/SW_Update.php: Update for Player '".$zone."' is not required. Current Version: '".$vers."' is actual");
 			}
 		}
 	}
