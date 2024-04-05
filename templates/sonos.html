@@ -989,41 +989,41 @@
 		
 		function t2slayout() {
             if (document.main_form.t2s_det.checked == true) {
-                $(".t2sdet").fadeIn(800);
+                $(".t2sdet").show();
             } else {
-                $(".t2sdet").fadeOut(800);
+                $(".t2sdet").hide();
             }
         }
 
         function callayout() {
             if (document.main_form.cal_det.checked == true) {
-                $(".caldet").fadeIn(800);
+                $(".caldet").show();
             } else {
-                $(".caldet").fadeOut(800);
+                $(".caldet").hide();
             }
         }
 
         function destlayout() {
             if (document.main_form.dest_det.checked == true) {
-                $(".destdet").fadeIn(800);
+                $(".destdet").show();
             } else {
-                $(".destdet").fadeOut(800);
+                $(".destdet").hide();
             }
         }
 
         function radlayout() {
             if (document.main_form.radio_det.checked == true) {
-                $(".radiodet").fadeIn(800);
+                $(".radiodet").show();
             } else {
-                $(".radiodet").fadeOut(800);
+                $(".radiodet").hide();
             }
         }
 
         function weatherlayout() {
             if (document.main_form.weather_det.checked == true) {
-                $(".weatherdet").fadeIn(800);
+                $(".weatherdet").show();
             } else {
-                $(".weatherdet").fadeOut(800);
+                $(".weatherdet").hide();
             }
         }
 
@@ -1047,10 +1047,10 @@
             console.log("prepareTTSConfigFields");
             const selectedEngine = $('#engine-selector input:checked');
             if (selectedEngine) {
-                var test = $('.ttsconfig').not('.' + selectedEngine.val()).not('.ttsbaseconfig').fadeOut(600);
-                $('.' + selectedEngine.val() + ', .ttsbaseconfig').fadeIn(600);
+                var test = $('.ttsconfig').not('.' + selectedEngine.val()).not('.ttsbaseconfig').hide();
+                $('.' + selectedEngine.val() + ', .ttsbaseconfig').show();
             } else {
-                $('.ttsconfig').fadeOut(600);
+                $('.ttsconfig').hide();
             }
 			 // T2S INSTANZ
             if (document.getElementById('tts_voicerss').checked == true) {
@@ -1080,36 +1080,36 @@
 			if (cat == "true") {
 				console.log("Communication to Loxone turned on");
                 $('#udpport').removeClass('ui-disabled');
-                $('.field_ms').fadeIn(600);
-                $('.label_template').fadeIn(600);
-                $('.template').fadeIn(600);
-                $('.empty_template').fadeIn(600);
+                $('.field_ms').show();
+                $('.label_template').show();
+                $('.template').show();
+                $('.empty_template').show();
 				if (mqtt == "true") {
 					console.log("MQTT selected");
-					$('.field_lab_udp').fadeOut(600);
-					$('.field_udp').fadeOut(600);
-					$('.btn').fadeOut(100);
-					$('.btnc').fadeIn(100);
-					$('.btnd').fadeIn(100);
+					$('.field_lab_udp').hide();
+					$('.field_udp').hide();
+					$('.btn').hide();
+					$('.btnc').show();
+					$('.btnd').show();
 				} else {
 					console.log("UDP selected");
-					$('.field_lab_udp').fadeIn(600);
-					$('.field_udp').fadeIn(600);
-					$('.btnc').fadeOut(100);
-					$('.btnd').fadeOut(100);
-					$('.btn').fadeIn(100);
+					$('.field_lab_udp').show();
+					$('.field_udp').show();
+					$('.btnc').hide();
+					$('.btnd').hide();
+					$('.btn').show();
 					//validate_enable('#udpport');
 					//validate_chk_object(['#udpport']);
 				}
             } else {
 				console.log("Communication to Loxone turned off");
                 $('#udpport').addClass('ui-disabled');
-                $('.field_ms').fadeOut(600);
-                $('.field_udp').fadeOut(600);
-                $('.field_lab_udp').fadeOut(600);
-                $('.label_template').fadeOut(600);
-                $('.template').fadeOut(600);
-                $('.empty_template').fadeOut(600);
+                $('.field_ms').hide();
+                $('.field_udp').hide();
+                $('.field_lab_udp').hide();
+                $('.label_template').hide();
+                $('.template').hide();
+                $('.empty_template').hide();
             }
             $("#sendlox").flipswitch("refresh");
             $('#miniserver').selectmenu('refresh', true);
@@ -2325,7 +2325,7 @@
                         <label id="lswupdate">Auto Update Sonos Soft-/Firmware</label>
                     </td>
                     <td style="height: 60px; width: 30%;">
-                        <table border=0 width="65%">
+                        <table border=0 width="80%">
                             <tr>
 							<td style="width: 10%">
 									<fieldset style="width: 100%">
@@ -2342,6 +2342,24 @@
 								<td class="update" style="width: 15%; height: 60px;">
                                     <label align="right" id="lstartupdate">Start:</label>
                                 </td>
+								<td class="update" style="width: 20%">
+										<fieldset style="width:90%">
+											<select id="hw_update_day" name="hw_update_day" data-mini="true" data-native-menu="true" style="width: 100%">
+												  <option selected="selected" value="10"><TMPL_VAR TEMPLATE.UPDATE_DAILY></option>
+												  <option disabled value="7"><TMPL_VAR TEMPLATE.UPDATE_WEEKLY></option>
+												  <option value="1"><TMPL_VAR TEMPLATE.UPDATE_MONDAY></option>
+												  <option value="2"><TMPL_VAR TEMPLATE.UPDATE_TUESDAY></option>
+												  <option value="3"><TMPL_VAR TEMPLATE.UPDATE_WEDNESDAY></option>
+												  <option value="4"><TMPL_VAR TEMPLATE.UPDATE_THURSDAY></option>
+												  <option value="5"><TMPL_VAR TEMPLATE.UPDATE_FRIDAY></option>
+												  <option value="6"><TMPL_VAR TEMPLATE.UPDATE_SATURDAY></option>
+												  <option value="0"><TMPL_VAR TEMPLATE.UPDATE_SUNDAY></option>
+											</select>
+										</fieldset>
+										<script>
+											$('#hw_update_day').val('<TMPL_VAR SYSTEM.hw_update_day>');
+										</script>
+                               </td>
                                 <td class="update" style="width: 20%">
 										<fieldset style="width:90%">
 											<select id="hw_update_time" name="hw_update_time" data-mini="true" data-native-menu="true" style="width: 100%">

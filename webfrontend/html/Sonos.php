@@ -1688,6 +1688,12 @@ if(array_key_exists($_GET['zone'], $sonoszone)){
 			GetHtMode();
 		break;
 		
+		case 'update':
+			$sonos = new SonosAccess($sonoszone[$master][0]);
+			$update = $sonos->CheckForUpdate();
+			#print_r($update);
+		break;
+		
 		case 'ttsp':
 			$text = ($_GET['text']);
 			isset($_GET['greet']) ? $greet = 1 : $greet = 0;
@@ -2147,10 +2153,10 @@ function shutdown()
 	global $log, $tts_stat, $check_info, $tmp_tts, $time_start;
 	
 	# FALLBACK --> setze 0 für virtuellen Texteingang (T2S End) falls etwas schief lief
-	#if ($tts_stat == 1)  {
+	if ($tts_stat == 1)  {
 		$tts_stat = 0;
 		send_tts_source($tts_stat);
-	#}
+	}
 	if (isset($_GET['debug']))    {
 		debugInfo();
 		$time_end = microtime(true);

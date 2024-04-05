@@ -1574,4 +1574,28 @@ function array_filter_recursive( array $array, callable $callback = null ) {
     return $array;
 }
 
+
+/**
+/* Funktion : startlog --> startet logging
+/*
+/* @param: Name of Log, filename of Log                        
+/* @return: 
+**/
+
+function startlog($name, $file)   {
+
+require_once "loxberry_system.php";	
+require_once "loxberry_log.php";
+
+$params = [	"name" => $name,
+				"filename" => LBPLOGDIR."/".$file.".log",
+				"append" => 1,
+				"addtime" => 1,
+				];
+$level = LBSystem::pluginloglevel();
+$log = LBLog::newLog($params);
+LOGSTART($name);
+return $name;
+}
+
 ?>

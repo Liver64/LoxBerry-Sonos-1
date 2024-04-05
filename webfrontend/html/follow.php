@@ -350,6 +350,7 @@ function leave()    {
 		unlink("/run/shm/".$save_status_file."_".$client.".json");
 		LOGDEB("follow.php: Save file for client '".$client."' has been deleted");
 	} else {
+		sleep($waitleave);
 		# pause/stop current Queue 
 		try {			
 			$sonos->Pause();

@@ -707,7 +707,7 @@ function sendmessage($errortext= '') {
 
 function sendaudioclip($errortext = "") {
 	
-	global $config, $volume, $filename, $messageid, $sonoszone, $sonos, $act_player, $playstat, $roomcord, $playg;
+	global $config, $volume, $master, $filename, $messageid, $sonoszone, $sonos, $act_player, $playstat, $roomcord, $playg;
 	
 	#print_r($sonoszone);
 	$time_start = microtime(true);
@@ -720,20 +720,18 @@ function sendaudioclip($errortext = "") {
 		exit;
 	}
 	
-	if(isset($_GET['zone'])) {
-		$act_player = $sonoszone[$_GET['zone']];
-		LOGDEB("play_t2s.php: Audioclip: Notification for Player '". $_GET['zone'] ."' has been called.");
-	}
+	$act_player = $sonoszone[$master];
+	LOGDEB("play_t2s.php: Audioclip: Notification for Player '". $master ."' has been called.");
 	
 	$playg = "false";
 	
 	# Get Group Coordinator
-	$roomcord = getCoordinator($_GET['zone']);
+	$roomcord = getCoordinator($master);
 	$sonos = new SonosAccess($sonoszone[$roomcord][0]);
 	$playstat = $sonos->GetTransportInfo($act_player);
 	
 	# get ZoneStatus (Member, Master, Single)
-	$stat = getZoneStatus($_GET['zone']);
+	$stat = getZoneStatus($master);
 	
 	# check if Player is capable for AUDIO_CLIP
 	if(!isset($act_player[11])) {
@@ -744,26 +742,26 @@ function sendaudioclip($errortext = "") {
 	if(isset($act_player[11]) and $act_player[11] == true) {
 		if(isset($act_player[12]) and $act_player[12] == true) {
 			$full_support = true;
-			LOGDEB("play_t2s.php: Audioclip: Player '". $_GET['zone'] ."' is fully supported for Notification.");
+			LOGDEB("play_t2s.php: Audioclip: Player '". $master ."' is fully supported for Notification.");
 		} else {
 			$full_support = false;
-			LOGDEB("play_t2s.php: Audioclip: Player '". $_GET['zone'] ."' has limited support for Notification.");
+			LOGDEB("play_t2s.php: Audioclip: Player '". $master ."' has limited support for Notification.");
 		}
 	}
 	# check wether zone is only partial supported and is in group
 	if ($full_support == false and $stat != "single")   {
 		$save = saveZonesStatus(); // saves all Zones Status
-		LOGDEB("play_t2s.php: Audioclip: Player '". $_GET['zone'] ."' Status has been saved.");
+		LOGDEB("play_t2s.php: Audioclip: Player '". $master ."' Status has been saved.");
 		$sonos->BecomeCoordinatorOfStandaloneGroup();
-		LOGDEB("play_t2s.php: Audioclip: Player '". $_GET['zone'] ."' has been ungrouped.");
+		LOGDEB("play_t2s.php: Audioclip: Player '". $master ."' has been ungrouped.");
 	}
 	
 	create_tts($errortext);
 	playAudioclip();
 	if ($full_support == false and $stat != "single")   {
-		$sonos = new SonosAccess($sonoszone[$_GET['zone']][0]);
+		$sonos = new SonosAccess($sonoszone[$master][0]);
 		restoreSingleZone();
-		LOGDEB("play_t2s.php: Audioclip: Player '". $_GET['zone'] ."' has been restored.");
+		LOGDEB("play_t2s.php: Audioclip: Player '". $master ."' has been restored.");
 	}
 	$time_end = microtime(true);
 	$t2s_time = $time_end - $time_start;
@@ -780,21 +778,16 @@ function sendaudioclip($errortext = "") {
 
 function doorbell() {
 
-	global $config, $sonos;
+	global $config, $master, $sonos;
 
 	if(isset($_GET['playgong'])) {
 		LOGERR("play_t2s.php: Audioclip: playgong could not be used im combination with function 'doorbell'");
 		exit;
 	}
 
-	if(!isset($_GET['zone'])) {
-		LOGERR("play_t2s.php: doorbell: zone should be set");
-		exit;
-	}
-
 	$time_start = microtime(true);
 	$prio = "HIGH";
-	$zones = [$_GET['zone']];
+	$zones = $master;
 
 	if (isset($_GET['member'])) {
 		$zones = array_merge($zones, audioclip_handle_members($_GET['member']));
@@ -863,7 +856,7 @@ function sendgroupmessage() {
 			}
 			#checkaddon();
 			#checkTTSkeys();
-			$master = $_GET['zone'];
+			#$master = $_GET['zone'];
 			$member = $_GET['member'];
 			create_tts($errortext);
 			// if parameter 'all' has been entered all zones were grouped

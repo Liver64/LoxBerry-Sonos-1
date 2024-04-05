@@ -93,13 +93,11 @@ echo "<PRE>";
 						# TV has been turned off
 						if (file_exists("/run/shm/".$TV_safe_file."_".$key.".json"))   {
 							$actual = json_decode(file_get_contents("/run/shm/".$TV_safe_file."_".$key.".json"), true);
-							startLog();
+							$logname = startlog("TV monitor", "tv_monitor");
 							# Restore previous Zone settings
 							restoreSingleZone($sonoszone, $master);
 							@array_map('unlink', glob('/run/shm/s4lox_TV*'.$key.'*.*'));
 							LOGDEB("bin/tv_monitor.php: Soundbar TV Mode for ".$key." has been turned off and previous settings has been restored.");
-						#} elseif (file_exists("/run/shm/".$status_file."_".$key.".json"))   {
-							#RestorePrevSBsettings($soundbars);
 						}
 						#***********************************************
 						# Soundbar has been turned On 1st time 
@@ -114,7 +112,7 @@ echo "<PRE>";
 						# TV has been turned on
 						if (!file_exists("/run/shm/".$status_file."_".$key.".json"))   {
 							echo "TV Mode for Soundbar '".$key."' has been turned On".PHP_EOL;
-							startLog();
+							$logname = startlog("TV monitor", "tv_monitor");
 							$sonos->SetAVTransportURI("x-sonos-htastream:".$soundbars[$key][1].":spdif");
 							# Set Volume
 							if ($soundbars[$key][14]['tvvol'] < 5)    {
@@ -142,6 +140,7 @@ echo "<PRE>";
 							} catch (Exception $e) {
 								echo "Speech/Surround/Night Mode/Subwoofer could'nt been turned On for: ".$key."".PHP_EOL;
 								LOGWARN("bin/tv_monitor.php: Speech/Surround/Night Mode/Subwoofer could'nt been turned On for: ".$key);
+								@LOGEND($logname);	
 							}
 							echo "Volume for '".$key."' has been set to: ".$vol.PHP_EOL;
 							LOGDEB("bin/tv_monitor.php: Soundbar ".$key." is On and in TV Mode.");
@@ -155,7 +154,7 @@ echo "<PRE>";
 								if ((string)$Stunden >= (string)$soundbars[$key][14]['fromtime'] and is_enabled($soundbars[$key][14]['tvmonnight']))   { 
 									if (!file_exists("/run/shm/".$statusNight."_".$key.".json"))   {
 										# Turn Night Mode On/Off
-										startLog();										
+										$logname = startlog("TV monitor", "tv_monitor");										
 										$sonos->SetDialogLevel(is_enabled($soundbars[$key][14]['tvmonnight']), 'NightMode');
 										echo "NightMode for Soundbar ".$key." has been turned to ".$night."".PHP_EOL;
 										LOGDEB("bin/tv_monitor.php: NightMode for Soundbar ".$key." has been turned to ".$night);
@@ -185,7 +184,7 @@ echo "<PRE>";
 					echo "Current incoming value for ".$key." at HDMI/SPDIF: ".$tvmodi['HTAudioIn'].PHP_EOL;
 				} catch (Exception $e) {
 					echo "Soundbar '".$key."' has not responded , maybe Soundbar is offline, we skip here...".PHP_EOL;
-					startLog();
+					$logname = startlog("TV monitor", "tv_monitor");
 					LOGWARN("bin/tv_monitor.php: Soundbar '".$key."' has not responded , maybe Soundbar is offline, we skip here...");
 				}
 			#********************************************
@@ -216,7 +215,9 @@ echo "<PRE>";
 	#print_r($config);
 	$time_end = microtime(true);
 	$process_time = $time_end - $time_start;
-	echo "Processing request tooks about ".round($process_time, 2)." seconds.".PHP_EOL;		
+	echo "Processing request tooks about ".round($process_time, 2)." seconds.".PHP_EOL;	
+
+	@LOGEND($logname);	
 	
 	# TV Modus values
 		
@@ -240,9 +241,9 @@ echo "<PRE>";
 /*
 /* @param:  none
 /* @return: none
-**/
 
-function startLog()    {
+
+function startlog("TV monitor", "tv_monitor")    {
 	
 	global $lbplogdir;
 
@@ -256,7 +257,7 @@ function startLog()    {
 	LOGSTART("TV Monitor");
 	return;
 }
-
+**/
 
 /**
 /* Function : DelFiles --> delete tmp files
@@ -285,7 +286,7 @@ function RestorePrevSBsettings($soundbars)    {
 	
 	global $status_file;
 	
-	startLog();
+	startlog("TV Monitor", "sonos");
 	foreach($soundbars as $key => $value)   {
 		$restorelevel = json_decode(file_get_contents("/run/shm/".$status_file."_".$key.".json"), true);
 		$sonos = new SonosAccess($soundbars[$key][0]); //Sonos IP Adresse

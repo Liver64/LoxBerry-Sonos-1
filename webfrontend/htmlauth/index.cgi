@@ -712,6 +712,7 @@ sub save_details
 	$cfg->{VARIOUS}->{selfunction} = "$R::func_list";
 	$cfg->{SYSTEM}->{checkt2s} = "$R::checkt2s";
 	$cfg->{SYSTEM}->{hw_update} = "$R::hw_update";
+	$cfg->{SYSTEM}->{hw_update_day} = "$R::hw_update_day";
 	$cfg->{SYSTEM}->{hw_update_time} = "$R::hw_update_time";
 	$cfg->{SYSTEM}->{hw_update_power} = "$R::hw_update_power";
 		
