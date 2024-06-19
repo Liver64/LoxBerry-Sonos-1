@@ -1586,9 +1586,6 @@
 				}).done(function(response) {
 					if(response == true){
 						$.post('/plugins/<TMPL_VAR PLUGINDIR>/index.php/?zone=' + zonetest + '&action=say&text=<TMPL_VAR ZONES.SONOS_TEST_PLAYER> ' + zonetest + '&volume=25&playgong=yes');
-						//console.log("valid data received");
-					} else {
-						//console.log("no data received");
 					}
 				});
 			});
@@ -1955,7 +1952,7 @@
 					console.log("RespVoice checked");
 					console.log(selectlang);
                     if (selectlang == null) {
-						console.log("TEST");
+						//console.log("TEST");
 						dialog('<TMPL_VAR T2S.VALIDATE_T2S_LANG>', 'OK', 'error', 'Responsive Voice');
                         $('html, body').animate({
                             scrollTop: $("#info").offset().top
@@ -2035,8 +2032,7 @@
 					dialog('<TMPL_VAR ERRORS.ERR_CHECKBOX>', 'OK', 'error', 'T2S Emergency');
 					return false;
 				} 
-				// show Save message 
-				timeout('<TMPL_VAR SAVE.SAVE_MESSAGE>', 'OK', 'info', '<TMPL_VAR SAVE.SAVE_ALL_OK>', '3500');
+
 				
 				// validate jingle file selection
                 var selectjingle = document.getElementById("file_gong").value;
@@ -2071,17 +2067,555 @@
 					}
 				}
 				$("#sendlox").flipswitch("refresh");
-				
+				// show Save message 
+				timeout('<TMPL_VAR SAVE.SAVE_MESSAGE>', 'OK', 'info', '<TMPL_VAR SAVE.SAVE_ALL_OK>', '3500');
             });
         });
     </script>
 </TMPL_IF>
 
 
+<TMPL_IF VOLUME>
+<!-- form 'FORM' VOLUME -->
+<form method="post" data-ajax="false" accept-charset="utf-8" name="main_form" id="main_form" action="./index.cgi?do=volume">
+        <input type="hidden" name="saveformdata3" value="1">
+		<link rel="stylesheet" href="/plugins/<TMPL_VAR PLUGINDIR>/web/table.css"/>
+		<link rel="stylesheet" href="/plugins/<TMPL_VAR PLUGINDIR>/web/silverBox.min.css"/>
+		<link rel="stylesheet" href="/plugins/<TMPL_VAR PLUGINDIR>/web/silverBox.css"/>
+		<script src="/plugins/<TMPL_VAR PLUGINDIR>/web/silverBox.min.js"></script>
+		<script src="/plugins/<TMPL_VAR PLUGINDIR>/web/silverBox.js"></script>
+		
+        <div class="form-group">
+		<tbody>
+            <table class="formtable-container" id="vol" border="0" width="80%" cellpadding="10">
+                <tr>
+	                <td valign="left" style="height: 33px; width: 15%; text-align: left;">
+                    <h2 class="auto-style3" style="width: 100%"></h2>
+                    <td style="height: 33px; text-align: center; width: 850px;">
+                        <img class='ico_sonos' src='/plugins/<TMPL_VAR PLUGINDIR>/images/sonos_logo.png' border='0' width='186' height='125' align="absmiddle">
+					</th>
+				</tr>
+				
+				<tr>
+				<td valign="left" style="height: 33px; width: 25%; text-align: left;"></td>	
+					<td valign="left">
+						<table class='formtable' id='formtable' style='width:800px; background: rgba(192,192,192, 0.2); border-radius: 20px; border: 1px solid #7e7e7e; padding: 0px'>
+							<td valign="left">
+							<button onclick="create_new_profile()" type="button" class="btn btn-primary" style="width:180px; align:right" id="btnscan" data-icon="plus" data-role="button" data-mini="true">New Volume Profile</button>
+								&nbsp;&nbsp;V = Volume, T = Treble, B = Bass, L = Loudness, SR = Surround, SW = Subwoofer, SWL = Subwooferlevel
+								<!--&nbsp;&nbsp;Volume = (0 to 100)  Treble, Bass = (-6 to 6)  Subwooferlevel = (-15 to 15)-->
+									<TMPL_VAR ROWSVOLPLAYER>
+							</td>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</tbody>
+		</div>
+		
+        <p>
+            <center>
+                <button type="submit" form="main_form" id="btnsubmit" data-role="button" data-inline="true" data-mini="true" data-icon="check"><TMPL_VAR SAVE.SAVE_BUTTON></button>
+            </center>
+        </p>
+			
+		<script>
+					
+			
+			
+			$(document).on('pageinit', function() {
+				//getvolprofiles();
+				//$('#main_form').trigger('create');
+			});
+			
+			
+								
+			
+			// add values to Profile and set all flipswitch
+			function getvolprofiles()   {
+				let countdata = 0;
+				var data;
+				
+				$.ajax({
+						url: 'index.cgi',
+						type: 'post',
+						data: { action: 'profiles'},
+						dataType: 'json',
+				})
+					
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown);
+				})
+				.done(function(data, textStatus, jqXHR) {
+							//let countdata = $.map(data, function(n, i) { return i; }).length;
+							//console.log(data);
+							$.each(data, function(i, outerArray) {
+								countdata++;
+								$('#profile' + countdata).val(data[parseInt(countdata) - 1].Name);
+								unsorted = outerArray.Player
+								const sorted = Object.keys(unsorted).sort().reduce(
+									(obj, key) => { 
+											obj[key] = unsorted[key]; 
+											return obj;
+											}, 
+									{}
+								);
+								var iteration = 0;
+								iteration = parseInt(iteration)
+								$.each(sorted, function(j, innerArray) {
+									iteration++;
+									//console.log(j);
+									//console.log($('#vol_' + iteration + '_' + countdata));
+									//$('#vol_' + iteration + '_' + countdata).val(innerArray[0].Volume);
+									//$('#treble_' + iteration + '_' + countdata).val(innerArray[0].Treble);
+									//$('#bass_' + iteration + '_' + countdata).val(innerArray[0].Bass);
+									if (innerArray[0].Loudness == 'true') {
+										$('#loudness_' + iteration + '_' + countdata).val("true").flipswitch("refresh");
+									} else {
+										$('#loudness_' + iteration + '_' + countdata).val("false").flipswitch("refresh");
+									}
+									if (innerArray[0].Surround == 'na') {
+										$('#surround_' + iteration + '_' + countdata).flipswitch("disable");
+										$('#surround_' + iteration + '_' + countdata).val("false").flipswitch("refresh");
+									} else if (innerArray[0].Surround == 'true') {
+										$('#surround_' + iteration + '_' + countdata).val("true").flipswitch("refresh");
+									} else {
+										$('#surround_' + iteration + '_' + countdata).val("false").flipswitch("refresh");
+										$('#surround_' + iteration + '_' + countdata).val("false").flipswitch("refresh");
+									}
+									if (innerArray[0].Subwoofer == 'na') {
+										$('#subwoofer_' + iteration + '_' + countdata).flipswitch("disable");
+										$('#sbass_' + iteration + '_' + countdata).attr("disabled", "disabled").css("background", "rgba(192,192,192, 0.2)").textinput("refresh");
+										$('#subwoofer_' + iteration + '_' + countdata).val("false").flipswitch("refresh");
+									} else if (innerArray[0].Subwoofer == 'true') {
+										$('#subwoofer_' + iteration + '_' + countdata).val("true").flipswitch("refresh");
+									} else {
+										$('#subwoofer_' + iteration + '_' + countdata).val("false").flipswitch("refresh");
+									}
+									//$('#sbass_' + iteration + '_' + countdata).val(innerArray[0].Subwoofer_level);
+								})
+							})
+				})
+				.always(function(data) {
+					$('#main_table').trigger('create').trigger('refresh');
+					console.log( "Action get Volume Profiles executed", data );
+				})
+				
+			};
+			
+		// add dynamically new profile	
+		function create_new_profile()   {
+			
+			let count = 0;
+			last_id = parseInt(document.getElementById('last_id').value);
+			new_id = last_id + 1;
+			
+			var iteration = 0;
+            iteration = parseInt(iteration)
+			var trHTML = '';
+			
+			$.ajax({
+					url: 'index.cgi',
+					type: 'post',
+					data: { action: 'soundbars'},
+					dataType: 'json',
+					async: false,
+						success: function(data, textStatus, jqXHR)   {
+							//console.log(new_id);
+							trHTML += "<div class=" + new_id +">";
+							trHTML += "<table class='tables' style='width:100%' id='tblvol_prof" + new_id +"' name='tblvol_prof" + new_id +"'>\n";
+							trHTML += "<th align='left' style='height: 25px; width:150px'>&nbsp;Profile #" + new_id +"</th>\n";
+							trHTML += "<th align='middle' colspan='6'><div style='width: 180px; align: left'>\n";
+							trHTML += "<input class='textfield' type='text' style='align: middle; width: 100%' id='profile" + new_id +"' name='profile" + new_id +"' value='' placeholder='Volume Profile Name'/>\n";
+							trHTML += "<td valign='left'>";
+							trHTML += "<img onclick='NewSonosData()' title='Load current values from Sonos devices' value='" + new_id +"' id='btnload" + new_id +"' name='btnload" + new_id +"' src='/plugins/<TMPL_VAR PLUGINDIR>/images/musik-note.png' border='0' width='28' height='28'>\n";
+							trHTML += "<img title='Clone values from last Profile' onclick='cloneprofile()' value='new_id' id='btnclone" + new_id +"' name='btnclone" + new_id +"' class='ico_clone' src='/plugins/<TMPL_VAR PLUGINDIR>/images/clone.svg' border='0' width='33' height='33'></td>\n";
+							trHTML += "</th><tr><th style='background-color: #6dac20;' align='left'>&nbsp;Rooms</th><div class='form-group col-7'>\n";
+							trHTML += "<th class='form-control' style='background-color: #6dac20; align: center'>V</th>\n";
+							trHTML += "<th class='form-control' style='background-color: #6dac20; align: center'>T</th>\n";
+							trHTML += "<th class='form-control' style='background-color: #6dac20; align: center'>B</th>\n";
+							trHTML += "<th class='form-control' style='background-color: #6dac20; align: center'>L</th>\n";
+							trHTML += "<th class='form-control' style='background-color: #6dac20; align: center'>SR</th>\n";
+							trHTML += "<th class='form-control' style='background-color: #6dac20; align: center'>SW</th>\n";
+							trHTML += "<th class='form-control' style='background-color: #6dac20; align: center'>SWL</th>\n";
+							trHTML += "</div></tr>";
+							// sort table
+							const sorted = Object.keys(data).sort().reduce(
+								(obj, key) => { 
+									obj[key] = data[key];;											
+									return obj;
+									}, 
+								{}
+							);
+							$.each(sorted, function(j, value) {
+								iteration++;
+								//console.log(j);		
+								//console.log(value);										
+								trHTML += "<tr>";
+								trHTML += "<td style='height: 25px; width: 160px;'><input type='text' id='zone_"+ iteration + "_" + new_id +"' name='zone_"+ iteration + "_" + new_id +"' readonly='true' value='" + j +"' style='width: 100%; background-color: #e6e6e6;'></td>";	
+								trHTML += "<td style='width: 45px; height: 15px;'><input type='text' id='vol_"+ iteration + "_" + new_id +"' name='vol_"+ iteration + "_" + new_id +"' size='100' data-validation-rule='special:number-min-max-value:0:100' data-validation-error-msg='<TMPL_VAR T2S.ERROR_VOLUME_PLAYER>' value=''></td>";
+								trHTML += "<td style='width: 45px; height: 15px;'><input type='text' id='treble_"+ iteration + "_" + new_id +"' name='treble_"+ iteration + "_" + new_id +"' size='100' data-validation-rule='special:number-min-max-value:-10:10' data-validation-error-msg='<TMPL_VAR VOLUME_PROFILES.ERROR_TREBLE_BASS_PLAYER>' value=''></td>\n";
+								trHTML += "<td style='width: 45px; height: 15px;'><input type='text' id='bass_"+ iteration + "_" + new_id +"' name='bass_"+ iteration + "_" + new_id +"' size='100' data-validation-rule='special:number-min-max-value:-10:10' data-validation-error-msg='<TMPL_VAR VOLUME_PROFILES.ERROR_TREBLE_BASS_PLAYER>' value=''></td>\n";
+								trHTML += "<td style='height: 10px; width: 5px; align: middle'>";
+								trHTML += "<fieldset><select id='loudness_"+ iteration + "_" + new_id +"' name='loudness_"+ iteration + "_" + new_id +"' data-role='flipswitch' style='width: 5%'>\n";
+								trHTML += "<option value='false'><TMPL_VAR T2S.LABEL_FLIPSWITCH_OFF></option><option value='true'><TMPL_VAR T2S.LABEL_FLIPSWITCH_ON></option>";
+								trHTML += "</select></fieldset></td>\n";
+								trHTML += "<td style='height: 10px; width: 25px; align: middle'>";
+								if (value[10] == 'NOSUR') {
+									trHTML += "<fieldset><select disabled id='surround_"+ iteration + "_" + new_id +"' name='surround_"+ iteration + "_" + new_id +"' data-role='flipswitch' style='width: 5%'>\n";
+								} else {
+									trHTML += "<fieldset><select id='surround_"+ iteration + "_" + new_id +"' name='surround_"+ iteration + "_" + new_id +"' data-role='flipswitch' style='width: 5%'>\n";
+								}
+								trHTML += "<option value='false'><TMPL_VAR T2S.LABEL_FLIPSWITCH_OFF></option><option value='true'><TMPL_VAR T2S.LABEL_FLIPSWITCH_OFF></option>";
+								trHTML += "</select></fieldset></td>\n";
+								trHTML += "<td style='height: 10px; width: 25px; align: middle'>";
+								if (value[8] == 'NOSUB') {
+									trHTML += "<fieldset><select disabled id='subwoofer_"+ iteration + "_" + new_id +"' name='subwoofer_"+ iteration + "_" + new_id +"' data-role='flipswitch' style='width: 5%'>\n";
+								} else {
+									trHTML += "<fieldset><select id='subwoofer_"+ iteration + "_" + new_id +"' name='subwoofer_"+ iteration + "_" + new_id +"' data-role='flipswitch' style='width: 5%'>\n";
+								}
+								trHTML += "<option value='false'><TMPL_VAR T2S.LABEL_FLIPSWITCH_OFF></option><option value='true'><TMPL_VAR T2S.LABEL_FLIPSWITCH_OFF></option>";
+								trHTML += "</select></fieldset></td>\n";
+								if (value[8] == 'NOSUB') {
+									trHTML += "<td style='width: 55px; height: 15px;'><input disabled type='text' id='sbass_"+ iteration + "_" + new_id +"' name='sbass_"+ iteration + "_" + new_id +"' size='100' value=''></td>\n";
+								} else {
+									trHTML += "<td style='width: 55px; height: 15px;'><input type='text' id='sbass_"+ iteration + "_" + new_id +"' name='sbass_"+ iteration + "_" + new_id +"' size='100' data-validation-rule='special:number-min-max-value:-15:15' data-validation-error-msg='<TMPL_VAR VOLUME_PROFILES.ERROR_SUB_LEVEL_PLAYER>' value=''></td>\n";
+								}
+								trHTML += "</tr>";
+							})
+							trHTML += "</table></div>";
+							
+							$('#btnscan').hide();
+							$('.ico_delete').hide();
+							$('#new_id').val(new_id);
+							$('#formtable').append(trHTML);
+							$('#tblvol_prof' + new_id +'').trigger('create');
+							$('#main_table').trigger('create');
+							$("#btnsubmit").focus();
+							$("#profile" + new_id +"").focus();							
+						}
+					})
+					
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown);
+				})
+				.always(function(data) {
+					console.log( "Action New Volume Profile executed", data );
+				})
+			};
+		
+			// clone data from last saved profile
+			function cloneprofile()   {
+				var data;
+				
+				var last_id = parseInt(document.getElementById('last_id').value);
+				var new_id = last_id + 1;
+				//console.log(last_id);
+				$.ajax({
+						url: 'index.cgi',
+						type: 'post',
+						data: { action: 'profiles'},
+						dataType: 'json',
+						async: false,
+				})
+					
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown);
+				})
+				.done(function(data, textStatus, jqXHR) {
+							$.each(data, function(i, outerArray) {
+								unsorted = outerArray.Player
+								const sorted = Object.keys(unsorted).sort().reduce(
+									(obj, key) => { 
+											obj[key] = unsorted[key]; 
+											return obj;
+											}, 
+									{}
+								);
+								var iteration = 0;
+								iteration = parseInt(iteration)
+								$.each(sorted, function(j, innerArray) {
+									iteration++;
+									//console.log(j);
+									//console.log(innerArray);
+									$('#vol_' + iteration + '_' + new_id).val(innerArray[0].Volume);
+									$('#treble_' + iteration + '_' + new_id).val(innerArray[0].Treble);
+									$('#bass_' + iteration + '_' + new_id).val(innerArray[0].Bass);
+									if (innerArray[0].Loudness == 'true') {
+										$('#loudness_' + iteration + '_' + new_id).val("true").flipswitch("refresh");
+									} else {
+										$('#loudness_' + iteration + '_' + new_id).val("false").flipswitch("refresh");
+									}
+									if (innerArray[0].Surround == 'na') {
+										$('#surround_' + iteration + '_' + new_id).flipswitch("disable");
+										$('#surround_' + iteration + '_' + new_id).val("false").flipswitch("refresh");
+									} else if (innerArray[0].Surround == 'true') {
+										$('#surround_' + iteration + '_' + new_id).val("true").flipswitch("refresh");
+									} else {
+										$('#surround_' + iteration + '_' + new_id).val("false").flipswitch("refresh");
+									}
+									if (innerArray[0].Subwoofer == 'na') {
+										$('#subwoofer_' + iteration + '_' + new_id).flipswitch("disable");
+										$('#sbass_' + iteration + '_' + new_id).attr("disabled", "disabled").css("background", "rgba(192,192,192, 0.2)").textinput("refresh");
+										$('#subwoofer_' + iteration + '_' + new_id).val("false").flipswitch("refresh");
+									} else if (innerArray[0].Subwoofer == 'true') {
+										$('#subwoofer_' + iteration + '_' + new_id).val("true").flipswitch("refresh");
+									} else {
+										$('#subwoofer_' + iteration + '_' + new_id).val("false").flipswitch("refresh");
+									}
+									$('#sbass_' + iteration + '_' + new_id).val(innerArray[0].Subwoofer_level);
+								})
+							})
+				})
+				.always(function(data) {
+					console.log( "Action Clone Profile executed", data );
+				})
+				
+			};
+		
+			// Sub Fucntion for new added Profile
+			function NewSonosData()   {
+				var last_id = parseInt(document.getElementById('last_id').value);
+				var load = last_id + 1;
+				obtainSonosData(load);
+			}
+			
+			// get actual data from all Player
+			function obtainSonosData(load)   {
+				var arrkey = parseInt(load) - 1;
+				var new_id = load;
+
+			    $.ajax({
+					url: '/plugins/<TMPL_VAR PLUGINDIR>/bin/vol_prof_ini.php',
+					type: 'post',
+					dataType: "json",
+					data: { 'new_id': 'true'}
+				})	
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					console.log(errorThrown);
+				})
+				.done(function(data, textStatus, jqXHR) {
+							//console.log(data);
+							$.each(data, function(i, outerArray) {
+								//console.log(outerArray);
+								$('#profile' + new_id).val("");
+								unsorted = outerArray.Player
+								const sorted = Object.keys(unsorted).sort().reduce(
+									(obj, key) => { 
+											obj[key] = unsorted[key]; 
+											return obj;
+											}, 
+									{}
+								);
+								var iteration = 0;
+								iteration = parseInt(iteration)
+								$.each(sorted, function(j, innerArray) {
+									iteration++;
+									//console.log(sorted);
+									//console.log(innerArray);
+									$('#vol_' + iteration + '_' + new_id).val(innerArray[0].Volume);
+									$('#treble_' + iteration + '_' + new_id).val(innerArray[0].Treble);
+									$('#bass_' + iteration + '_' + new_id).val(innerArray[0].Bass);
+									if (innerArray[0].Loudness == 'true') {
+										$('#loudness_' + iteration + '_' + new_id).val("true").flipswitch("refresh");
+									} else {
+										$('#loudness_' + iteration + '_' + new_id).val("false").flipswitch("refresh");
+									}
+									if (innerArray[0].Surround == 'na') {
+										$('#surround_' + iteration + '_' + new_id).flipswitch("disable");
+										$('#surround_' + iteration + '_' + new_id).val("false").flipswitch("refresh");
+									} else if (innerArray[0].Surround == 'true') {
+										$('#surround_' + iteration + '_' + new_id).val("true").flipswitch("refresh");
+									} else {
+										$('#surround_' + iteration + '_' + new_id).val("false").flipswitch("refresh");
+									}
+									if (innerArray[0].Subwoofer == 'na') {
+										$('#subwoofer_' + iteration + '_' + new_id).flipswitch("disable");
+										$('#sbass_' + iteration + '_' + new_id).attr("disabled", "disabled").css("background", "rgba(192,192,192, 0.2)").textinput("refresh");
+										$('#subwoofer_' + iteration + '_' + new_id).val("false").flipswitch("refresh");
+									} else if (innerArray[0].Subwoofer == 'true') {
+										$('#subwoofer_' + iteration + '_' + new_id).val("true").flipswitch("refresh");
+									} else {
+										$('#subwoofer_' + iteration + '_' + new_id).val("false").flipswitch("refresh");
+									}
+									$('#sbass_' + iteration + '_' + new_id).val(innerArray[0].Subwoofer_level);
+								})
+							})
+				})
+				.always(function(data) {
+					console.log( "Action load Sonos Data executed", data );
+				})
+				
+			};
+			
+			
+		// iniciate deleting profile
+		$(".ico-delete").on("click", function() {
+			$('#delprofil').val(0);
+			var del = ($(this).attr('value'));
+			deletedialog('<TMPL_VAR VOLUME_PROFILES.DIALOG_DELETE>', '<TMPL_VAR VOLUME_PROFILES.DIALOG_BUTTON_DELETE>', 'question', 'Volume Profile', del);
+		});
+		
+		// iniciate loading actual data
+		$(".ico-load").on("click", function() {
+			var load = ($(this).attr('value'));
+			obtainSonosData(load);
+		});
+		
+		// pop-up Dailog Box for Profil deletion
+		function deletedialog(text, ButtonText, Icon='', Title, del)    {
+			// https://silverboxjs.ir/documentation/?v=latest
+			silverBox({
+				alertIcon: Icon,
+				text: text,
+				centerContent: true,
+				title: {
+						text: Title
+						},
+				confirmButton: {
+								bgColor: "#6dac20",
+								border: "10px",
+								borderColor: "#6dac20",
+								textColor: "#fff",
+								text: ButtonText,
+								closeOnClick: true,
+								iconStart: "/plugins/<TMPL_VAR PLUGINDIR>/images/recycle-bin.png",
+								onClick: () => { deleteProfile(del)	},
+								},
+				cancelButton: {
+								text: "<TMPL_VAR SAVE.CANCEL_BUTTON>",
+								iconStart: "/plugins/<TMPL_VAR PLUGINDIR>/web/images/cancel.svg",
+								onClick: () => {return;
+												},
+								},
+				});
+		}
+			
+			
+		// pop-up Message during saving	
+		function message()   {
+			console.log("Save data");
+			timeout('<TMPL_VAR SAVE.SAVE_MESSAGE>', 'OK', 'info', '<TMPL_VAR SAVE.SAVE_ALL_OK>', '3000');
+		}
+		
+		// pop-up Timeout Dailog Box
+		function timeout(text, ButtonText, Icon='', Title, timeout)    {
+			// https://silverboxjs.ir/documentation/?v=latest
+			silverBox({
+				timer: timeout,
+				//alertIcon: Icon,
+				customIcon: "/plugins/<TMPL_VAR PLUGINDIR>/web/images/info.svg",
+				text: text,
+				centerContent: true,
+				title: {
+						text: Title
+						},
+				});
+		}
+			
+		// delete Profile	
+		function deleteProfile(del)   {
+			$('#delprofil').val(del);
+			$('#main_form').trigger('submit').trigger('create');
+		}
+		
+		
+		// validate input fields on Profiles
+		function validateProfiles()  {
+
+			var iteration = document.getElementById('countplayers').value;
+			var iterate_id = document.getElementById('new_id').value;
+			iteration = parseInt(iteration)
+			iterate_id = parseInt(iterate_id)
+			iteration += 1;
+			iterate_id += 1;
+			for (i = 1; i < iteration; ++i) {
+				for (e = 1; e < iterate_id; ++e) {
+					volume = $('#vol_' + i + '_' + e + '').val();
+					treble = $('#treble_' + i + '_' + e + '').val();
+					bass = $('#bass_' + i + '_' + e + '').val();
+					sbass = $('#sbass_' + i + '_' + e + '').val();
+					if (volume.length != 0)  {
+						validate_enable('#vol_' + i + '_' + e);
+						validate_chk_object(['#vol_' + i + '_' + e]);
+					}
+					if (treble.length != 0)  {
+						validate_enable('#treble_' + i + '_' + e);
+						validate_chk_object(['#treble_' + i + '_' + e]);
+					}
+					if (bass.length != 0)  {
+						validate_enable('#bass_' + i + '_' + e);
+						validate_chk_object(['#bass_' + i + '_' + e]);
+					}
+					if (sbass.length != 0)  {
+						validate_enable('#sbass_' + i + '_' + e);
+						validate_chk_object(['#sbass_' + i + '_' + e]);
+					}
+				}
+			}
+		}
+
+		function ProfilNameDialog(text, ButtonText, Icon='', Title)    {		
+			// https://silverboxjs.ir/documentation/?v=latest
+			silverBox({
+				alertIcon: 'warning',
+				text: text,
+				centerContent: true,
+				title: {
+						text: Title
+						},
+				confirmButton: {
+								bgColor: "#6dac20",
+								border: "10px",
+								borderColor: "#6dac20",
+								textColor: "#fff",
+								text: ButtonText,
+								closeOnClick: true
+								}
+				});
+		}
+			
+		
+        $(document).ready(function(e) {
+			getvolprofiles();
+			validateProfiles();	
+
+			$("form#main_form").submit(function(e) {
+				console.log("Submit");
+				// validate if Profile Name has been entered
+				var iterate = document.getElementById('new_id').value;
+				iterate = parseInt(iterate)
+				iterate += 1;
+				for (i = 1; i < iterate; ++i) {
+					if($('#profile' + i + '').val() == "")   {
+						$('#profile' + i + '').focus();	
+						ProfilNameDialog("<TMPL_VAR VOLUME_PROFILES.DIALOG_PROFILE_NAME>", "OK", Icon='', "Name");	
+						return false;
+					}
+				};
+				var validationFailed = false;
+				validateProfiles();	
+				if (validationFailed) {
+					e.preventDefault();
+					return false;
+				} else {
+					message();
+				}
+				$('#main_table').trigger('create').trigger('refresh');;
+			});
+		});
+		
+
+		</script>
+</form>	
+		
+</TMPL_IF>
+
+
 <TMPL_IF LOGFILES>
     <!-- form 'LOGFILES' START -->
     <TMPL_VAR LOGLIST_HTML>
-        <!-- form 'LOGFILES' END -->
+    <!-- form 'LOGFILES' END -->
 </TMPL_IF LOGFILES>
 
 
@@ -2284,7 +2818,7 @@
                     <td style="height: 60px; width: 30%;">
                         <table border=0 width="65%">
                             <tr>
-							<td style="width:9%; text-align: right;">
+							<td style="width:15%; text-align: right;">
                                 <label align="left" id="lfollow_host"><TMPL_VAR ZONES.FOLLOW_HOST_LABEL></label>
 							</td>
                             <td style="width: 15%">
@@ -2322,7 +2856,7 @@
 				
 				<tr>
                     <td style="height: 60px; width: 15%; text-align: left;">
-                        <label id="lswupdate">Auto Update Sonos Soft-/Firmware</label>
+                        <label id="lswupdate"><TMPL_VAR ZONES.SONOS_LABEL_UPDATE_FIRMWARE></label>
                     </td>
                     <td style="height: 60px; width: 30%;">
                         <table border=0 width="80%">
@@ -2525,7 +3059,7 @@
 				
 				function select_update() {
                     var up = document.getElementById('hw_update').value;
-					console.log(up);
+					//console.log(up);
                     if (up == 'true') {
                         $('.update').show();
                     } else {
@@ -2535,7 +3069,7 @@
 				
 								
 				function message()   {
-					console.log("save");
+					console.log("Save");
 					timeout('<TMPL_VAR SAVE.SAVE_MESSAGE>', 'OK', 'info', '<TMPL_VAR SAVE.SAVE_ALL_OK>', '3000');
 				}
 				

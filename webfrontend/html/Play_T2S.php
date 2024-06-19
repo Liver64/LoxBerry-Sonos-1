@@ -109,7 +109,7 @@ function playAudioclip() {
 				$file = $file.'.mp3';
 				$valid = mp3_files($file);
 				if ($valid === true) {
-					$jinglepath = $config['SYSTEM']['httpinterface']."/mp3/".trim($file);
+					$jinglepath = $config['SYSTEM']['cifsinterface']."/mp3/".trim($file);
 					$duration = round(\falahati\PHPMP3\MpegAudio::fromFile($config['SYSTEM']['httpinterface']."/mp3/".$file)->getTotalDuration());
 					audioclip_post_request($act_player[0], $act_player[1], "CUSTOM", $prio, $jinglepath);
 					$playg = "true";
@@ -119,7 +119,7 @@ function playAudioclip() {
 					exit;
 				}
 			} else {
-				$jinglepath = $config['SYSTEM']['httpinterface']."/mp3/".trim($config['MP3']['file_gong']);
+				$jinglepath = $config['SYSTEM']['cifsinterface']."/mp3/".trim($config['MP3']['file_gong']);
 				$duration = round(\falahati\PHPMP3\MpegAudio::fromFile($config['SYSTEM']['httpinterface']."/mp3/".$config['MP3']['file_gong'])->getTotalDuration());
 				audioclip_post_request($act_player[0], $act_player[1], "CUSTOM", $prio, $jinglepath);
 				$playg = "true";
@@ -135,12 +135,12 @@ function playAudioclip() {
 	if (isset($_GET['messageid'])) {
 		# messageid
 		$duration = round(\falahati\PHPMP3\MpegAudio::fromFile($config['SYSTEM']['httpinterface']."/mp3/".$messageid.".mp3")->getTotalDuration());
-		audioclip_post_request($act_player[0], $act_player[1], "CUSTOM", $prio, $config['SYSTEM']['httpinterface']."/mp3/".$messageid.".mp3");
+		audioclip_post_request($act_player[0], $act_player[1], "CUSTOM", $prio, $config['SYSTEM']['cifsinterface']."/mp3/".$messageid.".mp3");
 		LOGGING("play_t2s.php: Audioclip: Messageid has been played as Notification", 7);
 	} else {
 		$duration = round(\falahati\PHPMP3\MpegAudio::fromFile($config['SYSTEM']['httpinterface']."/".$filename.".mp3")->getTotalDuration());
 		# Text-to-speech
-		audioclip_post_request($act_player[0], $act_player[1], "CUSTOM", $prio, $config['SYSTEM']['httpinterface']."/".$filename.".mp3");
+		audioclip_post_request($act_player[0], $act_player[1], "CUSTOM", $prio, $config['SYSTEM']['cifsinterface']."/".$filename.".mp3");
 		LOGDEB("play_t2s.php: Audioclip: TTS '".$filename."' has been played as Notification");
 		# Workaround if jingle has been played upfront
 		if ($playg == "true" and $playstat == "1")   {
@@ -450,7 +450,7 @@ function play_tts($filename) {
 				$file = $file.'.mp3';
 				$valid = mp3_files($file);
 				if ($valid === true) {
-					$jinglepath = $config['SYSTEM']['httpinterface']."/mp3/".trim($file);
+					$jinglepath = $config['SYSTEM']['cifsinterface']."/mp3/".trim($file);
 					$sonos->AddToQueue($jinglepath);
 					LOGGING("play_t2s.php: Individual jingle '".trim($file)."' added to Queue", 7);	
 				} else {
@@ -458,7 +458,7 @@ function play_tts($filename) {
 					exit;
 				}
 			} else {
-				$jinglepath = $config['SYSTEM']['httpinterface']."/mp3/".trim($config['MP3']['file_gong']);
+				$jinglepath = $config['SYSTEM']['cifsinterface']."/mp3/".trim($config['MP3']['file_gong']);
 				$sonos->AddToQueue($jinglepath);
 				LOGGING("play_t2s.php: Standard jingle '".trim($config['MP3']['file_gong'])."' added to Queue", 7);	
 			}
@@ -507,10 +507,11 @@ function play_tts($filename) {
 							exit;
 						}						
 					}
-					$sonos->AddToQueue($config['SYSTEM']['httpinterface']."/".$filename.".mp3");
+					print_r($config['SYSTEM']['cifsinterface']."/".$filename.".mp3");
+					$sonos->AddToQueue($config['SYSTEM']['cifsinterface']."/".$filename.".mp3");
 					LOGGING("play_t2s.php: T2S '".trim($filename).".mp3' has been added to Queue", 7);
 				} else {
-					$sonos->AddToQueue($config['SYSTEM']['httpinterface']."/mp3/".$messageid.".mp3");
+					$sonos->AddToQueue($config['SYSTEM']['cifsinterface']."/mp3/".$messageid.".mp3");
 					LOGGING("play_t2s.php: MP3 File '".trim($messageid).".mp3' has been added to Queue", 7);
 					$filename = $messageid;
 				}
@@ -635,11 +636,11 @@ function sendmessage($errortext= '') {
 					exit();
 				}
 				if (strlen($filename) == '32') {
-					fwrite($file, $config['SYSTEM']['httpinterface']."/".$filename."\r\n");
+					fwrite($file, $config['SYSTEM']['cifsinterface']."/".$filename."\r\n");
 					LOGGING("play_t2s.php: T2S '".$filename.".mp3' has been added to batch", 7);
 					LOGGING("play_t2s.php: Please ensure to call later '...action=playbatch', otherwise the messages could be played uncontrolled", 5);					
 				} else {
-					fwrite($file, $config['SYSTEM']['httpinterface']."/".$MP3path."/".$messageid."\r\n");
+					fwrite($file, $config['SYSTEM']['cifsinterface']."/".$MP3path."/".$messageid."\r\n");
 					LOGGING("play_t2s.php: Messageid '".$messageid."' has been added to batch", 7);
 					LOGGING("play_t2s.php: Please ensure to call later '...action=playbatch', otherwise the messages could be played uncontrolled", 5);										
 				}
@@ -798,7 +799,7 @@ function doorbell() {
 		$file = $file.'.mp3';
 		$valid = mp3_files($file);
 		if ($valid === true) {
-			$jinglepath = $config['SYSTEM']['httpinterface']."/mp3/".trim($file);
+			$jinglepath = $config['SYSTEM']['cifsinterface']."/mp3/".trim($file);
 			LOGGING("play_t2s.php: Audioclip: Doorbell '".trim($file)."' with Priority HIGH has been announced", 7);	
 			audioclip_multi_post_request($zones, "CUSTOM", $prio, $jinglepath);
 		} else {

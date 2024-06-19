@@ -9,8 +9,9 @@
 
 function follow()    {
 	
-	global $sonoszone, $config, $client, $host, $hostroom, $backup, $save_status_file;
+	global $sonoszone, $config, $client, $follow, $host, $hostroom, $backup, $save_status_file;
 	
+	$follow = "true";
 	# check if not both parameters been called
 	if (isset($_GET['play']) and isset($_GET['function']))   {
 		LOGWARN("follow.php: Please enter even 'play' or 'function' for '".$client."' in URL, not both");
@@ -240,7 +241,7 @@ function checkHostState($hostroom)    {
 
 function checkClientState()    {
 	
-	global $sonoszone, $config, $client, $host, $hostroom, $save_status_file;
+	global $sonoszone, $config, $follow, $client, $host, $hostroom, $save_status_file;
 	
 	#+++++++++++++++++++++++++++++++++++
 	# checking client status
@@ -266,7 +267,7 @@ function checkClientState()    {
 			$sonos = new SonosAccess($sonoszone[$client][0]);
 		}
 	}
-	if ($stateclient == 1)   {
+	if ($follow == "false" and $stateclient == 1)   {
 		LOGINF("follow.php: Client '".$client."' is already streaming, we abort here...");
 		exit;
 	}
@@ -350,12 +351,14 @@ function leave()    {
 		unlink("/run/shm/".$save_status_file."_".$client.".json");
 		LOGDEB("follow.php: Save file for client '".$client."' has been deleted");
 	} else {
-		sleep($waitleave);
-		# pause/stop current Queue 
-		try {			
-			$sonos->Pause();
-		} catch (Exception $e) {
-			$sonos->Stop();
+		if ($follow = "true")  {
+			sleep($waitleave);
+			# pause/stop current Queue 
+			try {			
+				$sonos->Pause();
+			} catch (Exception $e) {
+				$sonos->Stop();
+			}
 		}
 		LOGOK("follow.php: Client '".$client."' has been paused streaming");
 		exit;

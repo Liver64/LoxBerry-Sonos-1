@@ -1188,7 +1188,6 @@ function AddDetailsToMetadata()
 	global $sonos, $services;
     
 	$browse = $sonos->GetFavorites();
-	
 	foreach ($browse as $key => $value)  {
 		# identify sid based on CurrentURI
 		$sid = substr(substr($value['resorg'], strpos($value['resorg'], "sid=") + 4), 0, strpos(substr($value['resorg'], strpos($value['resorg'], "sid=") + 4), "&"));
@@ -1477,7 +1476,7 @@ function GetZoneState()    {
 	if (empty($zoneson))    {
 		GetZoneState();
 	}
-	print_r($zoneson);
+	#print_r($zoneson);
 	$subwoofer = recursive_array_search('SE',$zoneson);
 	if ($subwoofer === false ? $sub = "false" : $sub = "true");
 	echo $sub;
