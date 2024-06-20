@@ -168,7 +168,7 @@ function nextradio() {
 	$sonos = new SonosAccess($coord[0]);
 	$sonos->SetMute(false);
 	if (isset($_GET['profile']) or isset($_GET['Profile']))    {
-		$volume = $lookup[0]['Player'][$coord[0]][0]['Volume'];
+		$volume = $lookup[0]['Player'][$master][0]['Volume'];
 	}
 	$sonos->SetVolume($volume);
 	$sonos->Play();

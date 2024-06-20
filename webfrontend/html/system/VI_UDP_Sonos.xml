@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VirtualInUdp Title="Sonos4lox" Comment="" Address="" Port="8750">
+	<VirtualInUdpCmd Title="Volume bad" Comment="" Address="" Check="vol_bad@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="100"/>
+	<VirtualInUdpCmd Title="Playstate bad" Comment="" Address="" Check="stat_bad@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Groupstate bad" Comment="" Address="" Check="grp_bad@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Mute bad" Comment="" Address="" Check="mute_bad@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Volume ben" Comment="" Address="" Check="vol_ben@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="100"/>
+	<VirtualInUdpCmd Title="Playstate ben" Comment="" Address="" Check="stat_ben@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Groupstate ben" Comment="" Address="" Check="grp_ben@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Mute ben" Comment="" Address="" Check="mute_ben@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Volume kueche" Comment="" Address="" Check="vol_kueche@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="100"/>
+	<VirtualInUdpCmd Title="Playstate kueche" Comment="" Address="" Check="stat_kueche@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Groupstate kueche" Comment="" Address="" Check="grp_kueche@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Mute kueche" Comment="" Address="" Check="mute_kueche@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Volume nele" Comment="" Address="" Check="vol_nele@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="100"/>
+	<VirtualInUdpCmd Title="Playstate nele" Comment="" Address="" Check="stat_nele@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Groupstate nele" Comment="" Address="" Check="grp_nele@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Mute nele" Comment="" Address="" Check="mute_nele@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Volume schlafen" Comment="" Address="" Check="vol_schlafen@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="100"/>
+	<VirtualInUdpCmd Title="Playstate schlafen" Comment="" Address="" Check="stat_schlafen@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Groupstate schlafen" Comment="" Address="" Check="grp_schlafen@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Mute schlafen" Comment="" Address="" Check="mute_schlafen@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Volume terrasse" Comment="" Address="" Check="vol_terrasse@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="100"/>
+	<VirtualInUdpCmd Title="Playstate terrasse" Comment="" Address="" Check="stat_terrasse@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Groupstate terrasse" Comment="" Address="" Check="grp_terrasse@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Mute terrasse" Comment="" Address="" Check="mute_terrasse@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Volume wohnzimmer" Comment="" Address="" Check="vol_wohnzimmer@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="100"/>
+	<VirtualInUdpCmd Title="Playstate wohnzimmer" Comment="" Address="" Check="stat_wohnzimmer@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Groupstate wohnzimmer" Comment="" Address="" Check="grp_wohnzimmer@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+	<VirtualInUdpCmd Title="Mute wohnzimmer" Comment="" Address="" Check="mute_wohnzimmer@\v" Signed="true" Analog="true" SourceValLow="0" DestValLow="0" SourceValHigh="100" DestValHigh="100" DefVal="0" MinVal="0" MaxVal="3"/>
+</VirtualInUdp>

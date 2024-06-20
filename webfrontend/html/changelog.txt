@@ -429,4 +429,6 @@
 			[BUGFIX] Ungroup bei pluginradio korrigiert
 			[IMPORVEMENT] Auto Update der Sonos Soft-/Firmware inkl. Power-On Funktion (optional)
 			[IMPORVEMENT] Neue Funktion Follow-me (Präsenzbasierend) optional
+			[IMPORVEMENT] Neue Funktion Sound Profile 
 			[BUGFIX] kleine Fehlerkorrekturen bzw. Optimierungen
+			[IMPORVEMENT] optische Anpassungen

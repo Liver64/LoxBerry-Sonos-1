@@ -2,8 +2,8 @@
 
 ##############################################################################################################################
 #
-# Version: 	5.5.0
-# Datum: 	04.2024
+# Version: 	5.5.5
+# Datum: 	06.2024
 # veröffentlicht in: https://github.com/Liver64/LoxBerry-Sonos/releases
 #
 # http://<IP>:1400/xml/device_description.xml

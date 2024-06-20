@@ -50,7 +50,7 @@ $updatefile 	= "/run/shm/Sonos4lox_update.json";				// Status file during Sonos 
 	#$zonesonline = array();
 	foreach($sonoszonen as $zonen => $ip) {
 		$port = 1400;
-		$timeout = 2;
+		$timeout = 3;
 		$handle = @stream_socket_client("$ip[0]:$port", $errno, $errstr, $timeout);
 		if($handle) {
 			#$sonoszone[$zonen] = $ip;
